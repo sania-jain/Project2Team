@@ -495,22 +495,6 @@ small {
   gap: 10px;
   align-items: center;
 }
-.date-arrows {
-  display: flex;
-  gap: 3px;
-}
-.date-arrows .icon-button {
-  padding: 6px;
-  width: 27px;
-}
-.view-switcher {
-  display: flex;
-  gap: 4px;
-}
-.view-switcher button {
-  min-width: 46px;
-  padding: 7px 11px;
-}
 .add-event-button {
   margin-left: 3px;
 }
@@ -852,65 +836,6 @@ small {
 .drawer-backdrop {
   display: none;
 }
-.month-label {
-  text-align: center;
-  margin-bottom: 14px;
-  color: var(--accent);
-  font-weight: 600;
-}
-.month-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-}
-.month-weekday {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
-}
-.month-cell {
-  min-height: 92px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 4px;
-}
-.month-cell.other-month {
-  opacity: 0.35;
-}
-.month-date {
-  padding: 3px 6px;
-  border: 0;
-  background: none;
-  border-radius: 5px;
-  font-size: 11px;
-}
-.calendar-event.compact {
-  position: static;
-  font-size: 9px;
-  padding: 3px 4px;
-  min-height: 0;
-  margin-top: 3px;
-  display: block;
-  width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.calendar-event.compact strong {
-  font-size: 9px;
-}
-.day-view {
-  min-width: 280px;
-}
-.day-view .calendar-event {
-  right: 12px;
-  left: 12px;
-  padding: 4px 12px;
-}
-.day-view .calendar-event strong {
-  font-size: 12px;
-}
 .explore,
 .comparison-page {
   padding: 25px;
@@ -1006,6 +931,7 @@ small {
   font-weight: 550;
 }
 .event-form input,
+.event-form select,
 .event-form textarea {
   width: 100%;
   padding: 10px 12px;
@@ -1017,6 +943,7 @@ small {
   outline: none;
 }
 .event-form input:focus,
+.event-form select:focus,
 .event-form textarea:focus {
   border-color: #b46f8e;
   box-shadow: 0 0 0 3px #8000390c;
@@ -1673,10 +1600,6 @@ small {
   .add-event-button {
     padding: 7px 9px;
   }
-  .view-switcher button {
-    min-width: 40px;
-    padding: 7px 9px;
-  }
   .ai-query {
     padding: 14px 12px;
   }
@@ -1728,19 +1651,6 @@ small {
   .query-input input {
     font-size: 11px;
   }
-  .month-cell {
-    min-height: 75px;
-    padding: 2px;
-  }
-  .month-weekday {
-    padding: 8px 2px;
-  }
-  .month-date {
-    font-size: 10px;
-  }
-  .calendar-event.compact strong {
-    font-size: 8px;
-  }
   .modal-content {
     padding: 21px;
   }
@@ -1763,10 +1673,10 @@ small {
   }
 }
 /* Keep short class blocks readable at every calendar width. */
-.calendar-event:not(.compact) {
+.calendar-event {
   min-height: 45px;
 }
-.calendar-event:not(.compact) span {
+.calendar-event span {
   white-space: nowrap;
 }
 /* Source-backed conversation stays separate from the illustrative calendar. */
