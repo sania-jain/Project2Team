@@ -306,3 +306,8 @@ test("only Friday excludes sections that also meet other weekdays", () => {
     true,
   );
 });
+// AI-generated test (Claude): checks the timetable class name is carried onto the calendar event.
+test("timetable class name is carried onto the calendar event", () => {
+  assert.equal(c.meeting.title, "CS 3724");
+  assert.equal(c.meeting.courseName, "Human Computer Interaction");
+});

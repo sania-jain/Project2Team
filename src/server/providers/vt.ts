@@ -122,6 +122,7 @@ export function parseTimetable(
         id: `vt-${termCode(semester)}-${crn}`,
         courseId: id,
         title: id,
+        courseName: c.name,
         days,
         start: begin ?? 0,
         end: end ?? 0,
