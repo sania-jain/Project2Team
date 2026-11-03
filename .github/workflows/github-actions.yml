@@ -1,18 +1,40 @@
-name: GitHub Actions
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: CI with Mattermost Notification
 on: [push]
+
 jobs:
-  Explore-GitHub-Actions:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v6
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+
+      - name: Run tests
+        id: tests
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          # Replace with your project's real test command, e.g.:
+          # npm ci && npm test
+          # pip install -r requirements.txt && pytest
+          echo "Running tests..."
+
+      - name: Notify Mattermost
+        if: always()   # run even if the tests failed
+        env:
+          WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_URL: ${{ github.event.head_commit.url }}
+          ACTOR: ${{ github.actor }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$JOB_STATUS" = "success" ]; then ICON="✅"; else ICON="❌"; fi
+
+          TEXT=$(printf '#### %s Build %s: %s @ %s\n**Author:** %s\n**Commit:** [%s](%s)\n**Message:** %s\n**Tests:** %s\n[View workflow run](%s)' \
+            "$ICON" "$JOB_STATUS" "$REPO" "$BRANCH" "$ACTOR" "${SHA:0:7}" "$COMMIT_URL" "$COMMIT_MSG" "$TEST_OUTCOME" "$RUN_URL")
+
+          curl -sf -X POST -H 'Content-Type: application/json' \
+            -d "$(jq -n --arg text "$TEXT" '{text: $text}')" \
+            "$WEBHOOK_URL"
