@@ -13,7 +13,7 @@ import {
   RecommendedCourses,
 } from "./components/RecommendedCourses";
 import { ScheduleComparison } from "./components/ScheduleComparison";
-import { Modal } from "./components/Modal";
+import { EventDetailsModal } from "./components/EventDetailsModal";
 import {
   baseEvents,
   courses,
@@ -24,8 +24,6 @@ import {
 import {
   conflicts,
   filterCourses,
-  formatTime,
-  meetingDays,
   recommendCourses,
 } from "./services/scheduler";
 import type {
@@ -364,59 +362,16 @@ export default function App() {
         />
       )}{" "}
       {selectedEvent && (
-        <Modal
-          title={selectedEvent.title}
+        <EventDetailsModal
+          event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-        >
-          <dl className="detail-grid">
-            {selectedEvent.courseName && (
-              <div>
-                <dt>Course</dt>
-                <dd>{selectedEvent.courseName}</dd>
-              </div>
-            )}
-            <div>
-              <dt>When</dt>
-              <dd>{selectedEvent.date ?? meetingDays(selectedEvent.days)}</dd>
-            </div>
-            <div>
-              <dt>Time</dt>
-              <dd>
-                {formatTime(selectedEvent.start)} –{" "}
-                {formatTime(selectedEvent.end)}
-              </dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>{selectedEvent.location || "No location set"}</dd>
-            </div>
-            {selectedEvent.notes && (
-              <div>
-                <dt>Notes</dt>
-                <dd>{selectedEvent.notes}</dd>
-              </div>
-            )}
-          </dl>
-          <div className="modal-footer">
-            <button
-              className="secondary"
-              onClick={() => setSelectedEvent(null)}
-            >
-              Close
-            </button>
-            <button
-              className="primary"
-              onClick={() => {
-                setEvents(events.filter((e) => e.id !== selectedEvent.id));
-                setSelectedEvent(null);
-                setSelectedOption(null);
-                setToast("Event removed");
-              }}
-            >
-              Remove from schedule
-            </button>
-          </div>
-        </Modal>
+          onRemove={() => {
+            setEvents(events.filter((e) => e.id !== selectedEvent.id));
+            setSelectedEvent(null);
+            setSelectedOption(null);
+            setToast("Event removed");
+          }}
+        />
       )}
       {toast && (
         <div className="toast" role="status">
