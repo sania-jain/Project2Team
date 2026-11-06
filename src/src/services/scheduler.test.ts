@@ -55,3 +55,12 @@ test("prompt recommendations respect existing commitments", async () => {
   });
   assert.ok(!blocked.courses.some((c) => c.id === "CS 3724"));
 });
+// AI-generated test (Claude): checks the demo events fit the single Mon–Fri sample week.
+test("demo events fit the Mon–Fri sample week and demo classes have names", () => {
+  for (const event of [...baseEvents, ...personalEvents]) {
+    assert.equal(event.date, undefined);
+    assert.ok(event.days.length > 0);
+    assert.ok(event.days.every((day) => day >= 1 && day <= 5));
+  }
+  for (const event of baseEvents) assert.ok(event.courseName);
+});

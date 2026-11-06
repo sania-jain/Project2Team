@@ -35,7 +35,6 @@ import type {
   Page,
   ScheduleEvent,
   ScheduleOption,
-  View,
 } from "./types";
 export default function App() {
   const [page, setPage] = useState<Page>("Dashboard");
@@ -52,8 +51,6 @@ export default function App() {
     ...baseEvents,
     ...personalEvents,
   ]);
-  const [view, setView] = useState<View>("Week");
-  const [date, setDate] = useState(new Date(2026, 7, 24));
   const [addOpen, setAddOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(
@@ -98,9 +95,6 @@ export default function App() {
     setReason(undefined);
     setMessage("");
     if (key === "semester") {
-      setDate(
-        value === "Spring 2027" ? new Date(2027, 0, 18) : new Date(2026, 7, 24),
-      );
       setToast(
         "Term changed. Submit your request to retrieve sections for this term.",
       );
@@ -112,7 +106,6 @@ export default function App() {
     setResults([]);
     setReason(undefined);
     setMessage("");
-    setDate(new Date(2026, 7, 24));
   };
   const submit = async () => {
     if (!query.trim() || loading) return;
@@ -196,8 +189,6 @@ export default function App() {
   const saveEvent = (event: ScheduleEvent) => {
     requestVersion.current++;
     setEvents((previous) => [...previous, event]);
-    setDate(new Date(event.date + "T12:00:00"));
-    if (event.days[0] === 0 || event.days[0] === 6) setView("Day");
     setAddOpen(false);
     setToast("Personal event added to your calendar");
   };
@@ -330,10 +321,6 @@ export default function App() {
           ) : (
             <ScheduleCalendar
               events={events}
-              view={view}
-              onView={setView}
-              date={date}
-              onDate={setDate}
               semester={filters.semester}
               onAdd={() => setAddOpen(true)}
               onEvent={setSelectedEvent}
@@ -364,7 +351,6 @@ export default function App() {
       </main>
       {addOpen && (
         <AddEventModal
-          date={date}
           onClose={() => setAddOpen(false)}
           onSave={saveEvent}
         />
@@ -383,6 +369,12 @@ export default function App() {
           onClose={() => setSelectedEvent(null)}
         >
           <dl className="detail-grid">
+            {selectedEvent.courseName && (
+              <div>
+                <dt>Course</dt>
+                <dd>{selectedEvent.courseName}</dd>
+              </div>
+            )}
             <div>
               <dt>When</dt>
               <dd>{selectedEvent.date ?? meetingDays(selectedEvent.days)}</dd>

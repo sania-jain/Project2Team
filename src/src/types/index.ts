@@ -1,9 +1,9 @@
 export type Color = "pink" | "blue" | "orange" | "green" | "purple";
-export type View = "Day" | "Week" | "Month";
 export type Page = "Dashboard" | "Explore Courses" | "Compare Schedules";
 export interface ScheduleEvent {
   id: string;
   title: string;
+  courseName?: string;
   days: number[];
   start: number;
   end: number;
