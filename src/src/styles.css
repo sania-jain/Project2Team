@@ -1088,6 +1088,9 @@ small {
   background: #4a2631;
   color: #ffb8c8;
 }
+.remove-confirm {
+  margin: 18px 0 0;
+}
 @media (min-width: 1600px) {
   :root {
     font-size: 14px;

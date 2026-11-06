@@ -111,18 +111,49 @@ test("an invalid event keeps the form open and leaves the calendar alone", () =>
   assert.ok(!titles("Mon").includes("Backwards"));
 });
 
-test("a saved event can be removed from the schedule", () => {
-  const { addEvent, openEvent, titles, dialog } = setup();
-  addEvent({ name: "Coffee", day: "5", start: "08:00", end: "08:30" });
-  const details = openEvent("Fri", "Coffee");
-  fireEvent.click(
-    within(details).getByRole("button", {
+const pressInDialog = (dialog: HTMLElement, name: string) =>
+  fireEvent.click(within(dialog).getByRole("button", { name, hidden: true }));
+
+test("removing an event takes a confirmation, then removes every occurrence", () => {
+  const { openEvent, titles, dialog, queryByText } = setup();
+  const details = openEvent("Mon", "CS 3114");
+  pressInDialog(details, "Remove from schedule");
+  assert.ok(dialog(), "the dialog stays open to confirm");
+  assert.ok(titles("Mon").includes("CS 3114"), "nothing is removed yet");
+  pressInDialog(details, "Yes, remove");
+  assert.equal(dialog(), null);
+  assert.ok(queryByText("Event removed"));
+  for (const day of ["Mon", "Wed", "Fri"] as const)
+    assert.ok(!titles(day).includes("CS 3114"), day);
+});
+
+test("declining the confirmation keeps the event on the schedule", () => {
+  const { openEvent, titles, dialog, queryByText } = setup();
+  const details = openEvent("Tue", "Gym");
+  pressInDialog(details, "Remove from schedule");
+  pressInDialog(details, "Keep it");
+  assert.ok(dialog(), "back on the details view");
+  assert.ok(titles("Tue").includes("Gym"));
+  assert.equal(queryByText("Event removed"), null);
+});
+
+test("reopening an event after backing out does not stay in confirm mode", () => {
+  const { openEvent, dialog } = setup();
+  const first = openEvent("Tue", "Gym");
+  pressInDialog(first, "Remove from schedule");
+  fireEvent.click(within(first).getByLabelText("Close dialog"));
+  assert.equal(dialog(), null);
+  const second = openEvent("Tue", "Gym");
+  assert.ok(
+    within(second).queryByRole("button", {
       name: "Remove from schedule",
       hidden: true,
     }),
   );
-  assert.equal(dialog(), null);
-  assert.ok(!titles("Fri").includes("Coffee"));
+  assert.equal(
+    within(second).queryByRole("button", { name: "Yes, remove", hidden: true }),
+    null,
+  );
 });
 
 test("changing semester relabels the calendar and keeps the same week", () => {
