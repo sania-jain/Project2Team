@@ -2,6 +2,7 @@ import {
   BookOpen,
   ChartNoAxesColumnIncreasing,
   ChevronDown,
+  CircleHelp,
   Home,
   Moon,
   Sun,
@@ -13,11 +14,13 @@ export function Header({
   onPage,
   dark,
   onTheme,
+  onHelp,
 }: {
   page: Page;
   onPage: (page: Page) => void;
   dark: boolean;
   onTheme: () => void;
+  onHelp: () => void;
 }) {
   const [profile, setProfile] = useState(false);
   return (
@@ -57,6 +60,14 @@ export function Header({
         ))}
       </nav>
       <div className="header-actions">
+        <button
+          className="help-button"
+          aria-label="How it works"
+          onClick={onHelp}
+        >
+          <CircleHelp size={19} />
+          <span>How it works</span>
+        </button>
         <button
           className="theme-button"
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
