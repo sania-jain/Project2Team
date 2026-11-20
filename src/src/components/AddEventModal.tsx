@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Modal } from "./Modal";
 import type { ScheduleEvent } from "../types";
-import { dateKey } from "../services/scheduler";
+const WEEKDAYS = [
+  { day: 1, label: "Monday" },
+  { day: 2, label: "Tuesday" },
+  { day: 3, label: "Wednesday" },
+  { day: 4, label: "Thursday" },
+  { day: 5, label: "Friday" },
+];
 export function AddEventModal({
-  date,
   onClose,
   onSave,
 }: {
-  date: Date;
   onClose: () => void;
   onSave: (event: ScheduleEvent) => void;
 }) {
@@ -38,12 +42,10 @@ export function AddEventModal({
             );
             return;
           }
-          const chosen = String(data.get("date"));
           onSave({
             id: crypto.randomUUID(),
             title: String(data.get("name")).trim(),
-            date: chosen,
-            days: [new Date(chosen + "T12:00:00").getDay()],
+            days: [Number(data.get("day"))],
             start,
             end,
             location: String(data.get("location")).trim(),
@@ -63,13 +65,14 @@ export function AddEventModal({
           />
         </label>
         <label>
-          Date
-          <input
-            type="date"
-            name="date"
-            defaultValue={dateKey(date)}
-            required
-          />
+          Day of the week
+          <select name="day" defaultValue="1" required>
+            {WEEKDAYS.map((w) => (
+              <option key={w.day} value={w.day}>
+                {w.label}
+              </option>
+            ))}
+          </select>
         </label>
         <div className="form-row">
           <label>
