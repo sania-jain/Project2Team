@@ -183,6 +183,51 @@ small {
 .toggle.on i {
   transform: translateX(16px);
 }
+.help-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.help-button:hover {
+  background: var(--tint);
+  color: var(--accent);
+}
+.walkthrough-step h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--accent);
+}
+.walkthrough-step p {
+  margin: 0;
+  line-height: 1.6;
+  min-height: 4.8em;
+}
+.walkthrough-dots {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+}
+.walkthrough-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--border);
+}
+.walkthrough-dots button.active {
+  background: var(--accent);
+}
 .profile-wrap {
   position: relative;
   border-left: 1px solid var(--border);
@@ -1618,6 +1663,9 @@ small {
   }
   .profile-button {
     gap: 4px;
+  }
+  .help-button span {
+    display: none;
   }
 }
 @media (max-width: 520px) {

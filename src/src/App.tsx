@@ -14,6 +14,12 @@ import {
 } from "./components/RecommendedCourses";
 import { ScheduleComparison } from "./components/ScheduleComparison";
 import { Modal } from "./components/Modal";
+import { Walkthrough } from "./components/Walkthrough";
+import {
+  browserStorage,
+  hasSeenWalkthrough,
+  markWalkthroughSeen,
+} from "./services/onboarding";
 import {
   baseEvents,
   courses,
@@ -65,6 +71,13 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [search, setSearch] = useState("");
   const [reason, setReason] = useState<Course | undefined>();
+  const [walkthrough, setWalkthrough] = useState(
+    () => !hasSeenWalkthrough(browserStorage()),
+  );
+  const closeWalkthrough = () => {
+    markWalkthroughSeen(browserStorage());
+    setWalkthrough(false);
+  };
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
   }, [dark]);
@@ -208,6 +221,7 @@ export default function App() {
         onPage={setPage}
         dark={dark}
         onTheme={() => setDark(!dark)}
+        onHelp={() => setWalkthrough(true)}
       />
       <main
         className={`app-layout ${page !== "Dashboard" ? "alternate-page" : ""}`}
@@ -362,6 +376,7 @@ export default function App() {
           </p>
         </aside>
       </main>
+      {walkthrough && <Walkthrough onClose={closeWalkthrough} />}
       {addOpen && (
         <AddEventModal
           date={date}
