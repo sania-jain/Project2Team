@@ -20,7 +20,7 @@ Open the local URL printed by Vite. `npm run build` checks TypeScript and create
 - `src/components/FilterSidebar.tsx`: filters and the mobile drawer.
 - `src/components/AIQueryBox.tsx`: prompt entry, examples, and processing feedback.
 - `src/components/ScheduleCalendar.tsx`: day/week/month views, calendar navigation, and event blocks.
-- `src/components/Modal.tsx`, `AddEventModal.tsx`: accessible native dialogs and personal-event form.
+- `src/components/Modal.tsx`, `AddEventModal.tsx`, `EventDetailsModal.tsx`: accessible native dialogs, personal-event form, and event details with confirmed removal.
 - `src/components/RecommendedCourses.tsx`: recommendation cards, details dialog, and course reasoning.
 - `src/components/ScheduleComparison.tsx`: three selectable sample schedules.
 - `src/data/mockData.ts`: courses, recurring classes, personal commitments, filters, and comparison presets.
@@ -34,7 +34,7 @@ Open the local URL printed by Vite. `npm run build` checks TypeScript and create
 
 Use prompt chips or enter a request; click the arrow to simulate recommendations. Supported example intents include easy courses, CS electives, gen ed, Friday meetings, and three-credit courses. All seven filters are controlled; semester switches the displayed sample term. No-match states are explicit.
 
-Course details include mock meeting information, professor rating, workload, and reasoning. Adding courses checks overlaps and duplicate enrollment. Personal events are dated and support weekends through Day view. Existing class and personal blocks repeat weekly. Comparison presets replace classes while preserving personal events and refuse conflicting presets. Click calendar events to inspect or remove them.
+Course details include mock meeting information, professor rating, workload, and reasoning. Adding courses checks overlaps and duplicate enrollment. Personal events are dated and support weekends through Day view. Existing class and personal blocks repeat weekly. Comparison presets replace classes while preserving personal events and refuse conflicting presets. Click calendar events to inspect them or, after a confirmation step, remove them.
 
 ## Backend and source-backed recommendations
 
