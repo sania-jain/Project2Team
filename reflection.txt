@@ -1,0 +1,114 @@
+Task 4 — Pre-Discussion
+=======================
+
+Project: Hokie Scheduler (npm project root is src/; Node 24; tests use the
+built-in node:test runner through tsx).
+
+1. Quality gates
+----------------
+A milestone is "verified" only when all six gates pass, run in this order:
+
+  1. Install       npm ci
+  2. Build         npm run build   (tsc -b, tsc -p tsconfig.server.json, vite build)
+  3. Test          npm test        (src/services/*.test.ts, server/tests/*.test.ts)
+  4. Lint          npm run lint    (oxlint)
+  5. Coverage      node built-in coverage over server/** and src/services/**
+  6. Traceability  every acceptance criterion in docs/requirements/US-*.md is
+                   linked to a test or a manual test case
+
+Order matters: a broken install or build makes test results meaningless, so
+later gates are not run after a failure.
+
+Coverage threshold: 80% of lines, measured over src/server/ and
+src/src/services/ only. Why 80: it is a common industry baseline that is
+reachable for logic modules without chasing trivial lines. The React UI
+(components, App.tsx, main.tsx) is excluded for now because we have no
+component-testing library; UI acceptance criteria are covered by manual test
+cases instead. Test files themselves are excluded so the suite cannot inflate
+the number by measuring its own assertions.
+
+Formatting (prettier) is NOT a gate: the tree already has formatting drift,
+so it would fail permanently. It is a detection aid only.
+
+2. Pass criteria (measurable)
+-----------------------------
+  Install       exit code 0
+  Build         exit code 0
+  Test          exit code 0 and fail 0, cancelled 0, skipped 0
+  Lint          exit code 0, 0 errors, 0 warnings
+  Coverage      exit code 0, at least one measured file row (an "all files
+                100.00" row with no files under it is a FAILURE, not a pass),
+                aggregate lines >= 80%
+  Traceability  100% of criteria tagged "@ac US-###.AC<n>" in a test or in a
+                manual case under docs/tests/manual/ that states steps and an
+                expected result. A test whose name merely looks related does
+                not count; only the tag counts.
+
+3. Failure behavior
+-------------------
+On a failing gate the agent must:
+  1. Stop at that gate.
+  2. Explain: quote the command, exit code, and real error output.
+  3. Classify: caused by the verification change, pre-existing, or
+     environmental.
+  4. Propose the smallest fix.
+
+Allowed without approval: fixing lint/format fallout from the agent's OWN
+edits; adding new tests.
+Always requires our approval: changing existing application code, editing,
+deleting or skipping an existing test, adding/upgrading a dependency,
+lowering a threshold or adding a coverage exclusion, changing config
+(package.json, tsconfig, .oxlintrc.json, vite.config.js, .github/).
+Never allowed: weakening a gate to reach READY (.skip, narrowed test runs,
+loosened assertions, lowered thresholds), committing or pushing.
+
+4. Skills vs. agents
+--------------------
+Skills (workflows - "what to do"):
+  /test      edge-case-first test writing in house style; tag each criterion
+             with @ac; run npm test; report defects without fixing them.
+  /coverage  run the exact coverage command; report measured %, files under
+             80%, and modules no test imports (invisible, not 0%).
+  /trace     build the criteria-to-test matrix by searching for @ac tags.
+  /verify    run all six gates in order, stop on first failure, write
+             docs/verification-report.md with a READY / NOT READY verdict.
+
+Agents (personas - "who does it"):
+  @tester      tries to BREAK the code: boundaries, invalid input, ordering,
+               shared title/day/time slot. Uses /test and /coverage.
+  @review      decides readiness from evidence only. Uses /verify, /coverage,
+               /trace. Does not write tests or fix code.
+  @maintainer  applies fixes the team has approved, in application code only.
+               Never touches tests. Uses /coverage.
+Each agent stays in its role and hands off to the others rather than doing
+their job.
+
+5. Permissions
+--------------
+All three: read the repo (never .env; .env.example only), run only the gate
+commands (npm ci / build / test / lint / coverage) plus read-only git
+(status, diff, rev-parse, log). bash "*" is denied by default; npm install is
+"ask"; git commit and git push are denied. No web access, no subagent tasks.
+
+  @tester      may edit only test files (src/src/services/*.test.ts,
+               src/server/tests/**) and docs/tests/manual/**.
+  @review      may edit only docs/verification-report.md.
+  @maintainer  may edit only application code (src/src/**, src/server/**),
+               explicitly NOT tests or config files.
+
+None may edit AGENTS.md, PHASE.md, opencode.json, the template's existing
+agents/skills, docs/requirements/, docs/design/, or .github/.
+
+6. Output
+---------
+docs/verification-report.md, containing:
+  - full commit SHA, branch, and whether the working tree is dirty
+  - run timestamp and an overall READY / NOT READY verdict
+  - one row per gate: command, PASS/FAIL, the measured value from the tool's
+    own output
+  - the acceptance-criteria-to-test traceability matrix
+  - failure detail for the gate that stopped the run (verbatim output)
+  - what the agent fixed, what is awaiting our approval, and known gaps
+    (e.g. the placeholder CI workflow, untested UI, modules no test imports)
+
+The verdict is an engineering readiness judgment, not a grade.
